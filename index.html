@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#7b2ff7">
+<title>WBWHO Save Editor</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">⭐ WBWHO</div>
+  <div class="fileinfo" id="fileinfo">No save open</div>
+  <div class="topbtns">
+    <button id="btnUndo" class="small" disabled title="Undo">↩️ Undo</button>
+    <button id="btnSave" class="small go" disabled title="Download edited save">💾 Save</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= START ================= -->
+<section id="tab-start" class="tab">
+  <h1>Hi! 👋 Let's edit your save.</h1>
+
+  <div class="card">
+    <h2>1️⃣ Open your save</h2>
+    <p>Pick your <b>unlocked</b> save file. (Not sure how to unlock it? Tap <b>❓ Help</b> at the bottom.)</p>
+    <label class="bigbtn">📂 Open my save file
+      <input type="file" id="pickMain" hidden>
+    </label>
+    <p class="tiny">Your file never leaves your device. WBWHO works on your computer or phone, even with no internet.</p>
+  </div>
+
+  <div class="card">
+    <h2>🧪 Just testing?</h2>
+    <p>Make a <b>fake save</b> to practice with. It works like the real thing.</p>
+    <button class="bigbtn alt" id="btnDemo1">🧪 Make a fake save</button>
+    <button class="bigbtn alt2" id="btnDemo2">🧪 Make fake save #2 <span class="tiny">(you "spent money")</span></button>
+    <p class="tiny">Fake save #2 helps you practice the <b>🔎 Find</b> page.</p>
+  </div>
+
+  <div class="card" id="loadedBox" hidden>
+    <h2>2️⃣ What's in your save</h2>
+    <div id="fileReport"></div>
+    <button class="bigbtn alt" id="btnBackup">🛟 Download a backup copy first</button>
+    <p class="tiny">A backup is a safe copy. If anything goes wrong, you put the backup back and it's like nothing happened.</p>
+    <h2>3️⃣ Then…</h2>
+    <p>Go to <b>🎮 Edit</b> to change stuff, or <b>🔎 Find</b> to find new things to change. When you're done, tap <b>💾 Save</b> at the top.</p>
+  </div>
+</section>
+
+<!-- ================= EDIT ================= -->
+<section id="tab-edit" class="tab" hidden>
+  <h1>🎮 Edit stuff</h1>
+  <div id="editEmpty" class="card">
+    <p>Open a save first (on the <b>🏠 Start</b> page).</p>
+  </div>
+  <div id="editArea" hidden>
+    <div class="card hint" id="editHintReal">
+      <p>Each button below changes one thing in your save. No buttons yet? Go to <b>🔎 Find</b> to make some. WBWHO remembers them for next time.</p>
+    </div>
+    <div id="cards"></div>
+    <div class="card">
+      <h2>📤 Share or load a cheat list</h2>
+      <p class="tiny">A cheat list is all your buttons in one small file. Share it with friends or move it to another device.</p>
+      <div class="row">
+        <button id="btnExportList">📤 Save my cheat list</button>
+        <label class="btnlike">📥 Load a cheat list<input type="file" id="pickList" accept=".json,application/json" hidden></label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FIND ================= -->
+<section id="tab-find" class="tab" hidden>
+  <h1>🔎 Find things</h1>
+
+  <div class="card">
+    <h2>🔢 Find a number</h2>
+    <p class="tiny">Money, ammo, XP, level, anything with a number.</p>
+    <label>What is it called?</label>
+    <input type="text" id="findName" placeholder="Money" value="Money">
+    <div class="emojis" id="emojiPick"></div>
+    <label>What number does the game show <b>right now</b>?</label>
+    <input type="text" inputmode="decimal" id="findValue" placeholder="Example: 12500">
+    <details>
+      <summary>More options (if it can't find it)</summary>
+      <label class="check"><input type="checkbox" id="optDecimal"> Look for numbers with dots (like 99.5)</label>
+      <label class="check"><input type="checkbox" id="optScaled"> The game might store it ×10 or ×100</label>
+      <label class="check"><input type="checkbox" id="optTiny" checked> Look for small numbers too (under 256)</label>
+    </details>
+    <button class="bigbtn" id="btnFind">🔎 Find it!</button>
+    <div id="findResult"></div>
+  </div>
+
+  <div class="card">
+    <h2>🔤 Find a word</h2>
+    <p class="tiny">Search for a gun, car, outfit or mission name, like <i>pistol</i> or <i>mission</i>.</p>
+    <input type="text" id="wordQuery" placeholder="Example: pistol">
+    <button class="bigbtn alt" id="btnWord">🔤 Search words</button>
+    <button class="bigbtn alt2" id="btnAllWords">📜 Show every word in my save</button>
+    <input type="text" id="wordFilter" placeholder="Filter the list…" hidden>
+    <div id="wordResult"></div>
+  </div>
+</section>
+
+<!-- ================= COMPARE ================= -->
+<section id="tab-compare" class="tab" hidden>
+  <h1>🆚 Compare two saves</h1>
+  <div class="card hint">
+    <p><b>How this helps:</b> Save the game. Do <b>one</b> thing (finish a mission, buy a car, unlock an outfit). Save again. Put both saves here. WBWHO shows you <b>exactly what changed</b>. Then you can copy those changes into any save.</p>
+  </div>
+  <div class="card">
+    <label class="bigbtn alt">📂 Pick the BEFORE save<input type="file" id="pickA" hidden></label>
+    <div id="nameA" class="tiny">Nothing picked</div>
+    <label class="bigbtn alt2">📂 Pick the AFTER save<input type="file" id="pickB" hidden></label>
+    <div id="nameB" class="tiny">Nothing picked</div>
+    <button class="bigbtn" id="btnCompare" disabled>🆚 Show what changed</button>
+  </div>
+  <div id="diffResult"></div>
+</section>
+
+<!-- ================= HEX ================= -->
+<section id="tab-hex" class="tab" hidden>
+  <h1>🧾 Inside the file</h1>
+  <p class="tiny">This is your save's raw data. Every box is one tiny piece, and every spot has a number. Tap a box to see and change it.</p>
+  <div class="card row">
+    <input type="text" id="hexGo" placeholder="Go to spot # (like 1234 or 0x4D2)">
+    <button id="btnHexGo">Go</button>
+  </div>
+  <div class="row">
+    <button id="hexPrev">⬅️ Back</button>
+    <span id="hexPos" class="tiny"></span>
+    <button id="hexNext">Next ➡️</button>
+  </div>
+  <div id="hexView" class="hex"></div>
+  <div id="inspector" class="card" hidden></div>
+</section>
+
+<!-- ================= HELP ================= -->
+<section id="tab-help" class="tab" hidden>
+  <h1>❓ Help</h1>
+
+  <details class="card" open>
+    <summary><b>🏆 Will this mess up my trophies?</b></summary>
+    <p><b>No.</b> Your trophies are kept on your <b>PlayStation account</b>, not in the save file. WBWHO only changes the save file, so it can't delete or change trophies you already have.</p>
+    <p>Two things to know:</p>
+    <ul>
+      <li>If you give yourself loads of money or unlock everything, the game <b>might hand you a trophy</b> for it later. If you only want trophies you earned yourself, don't max out things that have trophies.</li>
+      <li>When you put the save back on your PlayStation, <b>sign it to your own account</b> (Save Wizard calls this "Re-sign"). That keeps everything tied to you.</li>
+    </ul>
+  </details>
+
+  <details class="card">
+    <summary><b>🔒 My save is "locked". What do I do?</b></summary>
+    <p>PlayStation locks (encrypts) every save so you can't open it on a computer. You need a tool to <b>unlock it first</b>. WBWHO can't do that part.</p>
+    <ul>
+      <li><b>Save Wizard for PS4 MAX</b> (costs money, works on any PS4 or PS5): use <b>Advanced Mode</b> to <b>Decrypt</b> (get the file out), then <b>Replace</b> (put your edited file back).</li>
+      <li><b>Apollo Save Tool</b> (free, only on a jailbroken PS4): use "Decrypt save files", then "Import decrypted file".</li>
+    </ul>
+    <p>⚠️ <b>PS5 note:</b> Saves from the <b>PS5 version</b> of a game are much harder to get off the console and usually can't be unlocked right now. The <b>PS4 version</b> of the game (which also plays on PS5) is the one that works.</p>
+  </details>
+
+  <details class="card">
+    <summary><b>🪜 The whole thing, step by step</b></summary>
+    <ol>
+      <li>On PlayStation: <b>Settings → Saved Data → Copy to USB</b>.</li>
+      <li>On your computer: <b>unlock</b> the save (see the 🔒 part above).</li>
+      <li>Open the unlocked file in WBWHO.</li>
+      <li>Tap <b>🛟 Download a backup copy</b>. Keep it safe!</li>
+      <li>Change what you want on <b>🎮 Edit</b>, or find new things on <b>🔎 Find</b>.</li>
+      <li>Tap <b>💾 Save</b>. You get a file with the <b>same name</b>. Don't rename it!</li>
+      <li>Use your unlock tool to <b>put it back</b> (Replace / Import) and <b>re-sign</b> it to your account.</li>
+      <li>Copy it back from the USB to your PlayStation, then load the game. 🎉</li>
+    </ol>
+  </details>
+
+  <details class="card">
+    <summary><b>💰 How do I find my money (or anything else)?</b></summary>
+    <ol>
+      <li>In the game, look at how much money you have. Example: <b>12500</b>.</li>
+      <li>On <b>🔎 Find</b>, type <b>12500</b> and tap <b>Find it!</b></li>
+      <li>If it finds <b>one</b> spot, that's it! Tap <b>⭐ Make a button</b>.</li>
+      <li>If it finds <b>lots</b> of spots, go back in the game, <b>spend or earn some money</b>, save, unlock that new save, then use <b>"Load my newer save"</b> and type the new number. Do this until only one spot is left.</li>
+    </ol>
+    <p>Try it with the two <b>fake saves</b> first. It's easy once you've done it once!</p>
+  </details>
+
+  <details class="card">
+    <summary><b>🚗🔫👕 Cars, guns, outfits & missions</b></summary>
+    <p>These are usually stored as <b>on/off switches</b>, not numbers. The easiest way to find them:</p>
+    <ol>
+      <li>Save the game (this is <b>BEFORE</b>).</li>
+      <li>Unlock <b>one</b> thing: buy a gun, finish a mission, get an outfit.</li>
+      <li>Save again (this is <b>AFTER</b>).</li>
+      <li>Put both saves in <b>🆚 Compare</b>. It shows what changed. Make a button from it, or copy the change into your save.</li>
+    </ol>
+    <p>You can also search for a name with <b>🔤 Find a word</b>, then look at the boxes next to it.</p>
+  </details>
+
+  <details class="card">
+    <summary><b>📖 Word list (what do these mean?)</b></summary>
+    <ul>
+      <li><b>Save file</b>: the file where the game keeps your progress.</li>
+      <li><b>Locked / encrypted</b>: scrambled so only the PlayStation can read it.</li>
+      <li><b>Unlocked / decrypted</b>: unscrambled, so WBWHO can read it.</li>
+      <li><b>Re-sign</b>: stamping the save with your account so your PlayStation accepts it.</li>
+      <li><b>Backup</b>: a safe copy of your save, just in case.</li>
+      <li><b>Spot #</b>: where something is inside the file, like a page number in a book.</li>
+      <li><b>Cheat list</b>: all your WBWHO buttons saved in one small file.</li>
+      <li><b>Check code</b>: a number the game uses to tell if a save was changed. WBWHO fixes it for you when it can.</li>
+    </ul>
+  </details>
+
+  <details class="card">
+    <summary><b>🛟 Safety tips</b></summary>
+    <ul>
+      <li><b>Always</b> keep a backup.</li>
+      <li>Change a few things, test in the game, then change more. It makes problems easy to find.</li>
+      <li>Don't make numbers crazy big. Big but normal (like 999,999,999 money) is safest.</li>
+      <li>Play modded saves on your own, not online with other people.</li>
+      <li>If the game says the save is broken, put your backup back. No harm done.</li>
+    </ul>
+  </details>
+
+  <details class="card">
+    <summary><b>📱 Put WBWHO on your home screen like an app</b></summary>
+    <ul>
+      <li><b>iPhone:</b> open WBWHO in Safari → Share button → <b>Add to Home Screen</b>.</li>
+      <li><b>Android:</b> open in Chrome → ⋮ menu → <b>Install app</b>.</li>
+      <li><b>Computer:</b> open in Chrome or Edge → click the install icon in the address bar.</li>
+    </ul>
+  </details>
+</section>
+
+</main>
+
+<nav class="bottom">
+  <button data-tab="start" class="on">🏠<span>Start</span></button>
+  <button data-tab="edit">🎮<span>Edit</span></button>
+  <button data-tab="find">🔎<span>Find</span></button>
+  <button data-tab="compare">🆚<span>Compare</span></button>
+  <button data-tab="hex">🧾<span>Inside</span></button>
+  <button data-tab="help">❓<span>Help</span></button>
+</nav>
+
+<div id="toast" class="toast" hidden></div>
+<input type="file" id="pickNewer" hidden>
+
+<script src="app.js"></script>
+</body>
+</html>
