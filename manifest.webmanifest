@@ -1,0 +1,9 @@
+{
+  "name": "WBWHO Save Editor",
+  "short_name": "WBWHO",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#14101f",
+  "theme_color": "#7b2ff7",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
