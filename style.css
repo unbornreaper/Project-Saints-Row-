@@ -105,3 +105,9 @@ label.check input { width: 22px; height: 22px; }
 .bar > div { height: 100%; background: linear-gradient(90deg, var(--green), var(--yellow), var(--red)); }
 ul, ol { padding-left: 22px; }
 li { margin: 4px 0; }
+.setup { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+.setup button { justify-content: flex-start; text-align: left; font-size: 1.05rem; padding: 12px; }
+.setup button .tiny { display: block; }
+.setup button > span:first-child { font-size: 1.6rem; }
+.flash { animation: flash 1.2s ease 2; }
+@keyframes flash { 50% { border-color: var(--yellow); box-shadow: 0 0 0 4px #ffd40066; } }
