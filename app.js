@@ -289,6 +289,10 @@ function renderCards() {
   if (!has) return;
   const list = getList();
   $('#editHintReal').hidden = list.length > 0;
+  const locked = entropy(S.data) > 7.9;
+  $('#editStatus').innerHTML = locked
+    ? `<div class="result bad" style="margin-bottom:14px"><b>🔒 ${esc(S.name)} still looks LOCKED.</b> WBWHO can't read a locked save. Unlock (decrypt) it first, and make sure you picked the <b>unlocked</b> file. Tap ❓ Help to see how.</div>`
+    : `<div class="result good" style="margin-bottom:14px">✅ <b>${esc(S.name)}</b> is open (${fmt(S.data.length)} bytes).</div>`;
   const groups = {};
   list.forEach(r => (groups[r.group || 'My buttons'] ||= []).push(r));
   let html = '';
@@ -344,6 +348,30 @@ $('#cards').addEventListener('click', e => {
   const g = list.filter(x => (x.group || 'My buttons') === b.dataset.g && S.data && x.offset < S.data.length);
   if (act === 'allon' || act === 'alloff') { g.filter(x => x.kind === 'switch').forEach(x => setRecipe(x, act === 'allon', true)); afterChange(); toast(act === 'allon' ? '✅ All turned ON!' : 'All turned OFF'); }
   if (act === 'allmax') { g.filter(x => x.kind === 'number').forEach(x => setRecipe(x, safeMax(x), true)); afterChange(); toast('🚀 All maxed!'); }
+});
+
+/* first-time setup list on the Edit page */
+const SETUP = [
+  { name: 'Money', emoji: '💰', tip: 'Look at your cash in the game first' },
+  { name: 'Respect / XP', emoji: '⭐', tip: 'The XP or respect number' },
+  { name: 'Level', emoji: '🏅', tip: 'Your player level' },
+  { name: 'Ammo', emoji: '🎯', tip: 'Bullets for the gun you are holding' },
+  { name: 'Skill points', emoji: '💎', tip: 'If the game shows any' },
+];
+function renderSetup() {
+  $('#setupList').innerHTML = SETUP.map((x, i) => `<button data-setup="${i}"><span>${x.emoji}</span><span>Find my <b>${esc(x.name)}</b><span class="tiny">${esc(x.tip)}</span></span></button>`).join('') +
+    `<button data-setup="unlock"><span>🔫</span><span>Guns, cars, outfits &amp; missions<span class="tiny">Uses two saves: one before and one after you unlock something</span></span></button>`;
+}
+$('#setupList').addEventListener('click', e => {
+  const b = e.target.closest('button[data-setup]'); if (!b) return;
+  if (b.dataset.setup === 'unlock') { showTab('compare'); return; }
+  const x = SETUP[+b.dataset.setup];
+  $('#findName').value = x.name; S.findEmoji = x.emoji; renderEmojis();
+  $('#findValue').value = ''; $('#findResult').innerHTML = '';
+  showTab('find');
+  const v = $('#findValue'); v.closest('.card').classList.remove('flash'); void v.offsetWidth; v.closest('.card').classList.add('flash');
+  v.focus();
+  toast(`Type your ${esc(x.name)} from the game, then tap <b>🔎 Find it!</b>`, 4000);
 });
 
 /* ---------------- FIND: numbers ---------------- */
@@ -678,7 +706,7 @@ $('#pickList').addEventListener('change', async e => {
 });
 window.addEventListener('beforeunload', e => { if (S.undo.length) { e.preventDefault(); e.returnValue = ''; } });
 
-renderEmojis(); renderCards(); renderHex();
+renderEmojis(); renderSetup(); renderCards(); renderHex();
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
 
 // for testing
