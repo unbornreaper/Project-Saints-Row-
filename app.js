@@ -711,7 +711,7 @@ $('#pickList').addEventListener('change', async e => {
 window.addEventListener('beforeunload', e => { if (S.undo.length) { e.preventDefault(); e.returnValue = ''; } });
 
 renderEmojis(); renderSetup(); renderCards(); renderHex();
-if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});
 
 // for testing
 window.WBWHO = { S, makeDemo, crc32, detectChecksum, searchNumber, openSave };
