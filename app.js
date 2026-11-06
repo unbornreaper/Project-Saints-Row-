@@ -222,6 +222,8 @@ async function openSave(bytes, name) {
   else S.data = bytes.slice();
   S.csInner = detectChecksum(S.data);
   S.isDemo = new TextDecoder().decode(S.data.subarray(0, 16)) === DEMO_MAGIC;
+  S.sr = typeof SR !== 'undefined' ? SR.parse(S.data) : null;
+  if (typeof SRUI !== 'undefined') SRUI.build();
   report(); refreshTop(); renderCards(); renderHex();
   $('#findResult').innerHTML = ''; $('#wordResult').innerHTML = ''; $('#wordFilter').hidden = true;
 }
@@ -229,6 +231,7 @@ function report() {
   const e = entropy(S.data), locked = e > 7.9;
   const lines = [];
   lines.push(`<p>📄 <b>${esc(S.name)}</b>, ${fmt(S.raw.length)} bytes</p>`);
+  if (S.sr) lines.push(`<p>🎮 <b>Saints Row save found!</b> Money, XP, guns, cars, clothes and more are ready on <b>🎮 Edit</b>.</p>`);
   if (S.isDemo) lines.push('<p>🧪 This is a <b>fake save</b> made by WBWHO. Buttons are already made for you on 🎮 Edit!</p>');
   lines.push(`<p>Scrambled-ness:</p><div class="bar"><div style="width:${Math.min(100, e / 8 * 100)}%"></div></div>`);
   if (locked) {
@@ -288,7 +291,8 @@ function renderCards() {
   $('#editEmpty').hidden = has; $('#editArea').hidden = !has;
   if (!has) return;
   const list = getList();
-  $('#editHintReal').hidden = list.length > 0;
+  $('#editHintReal').hidden = list.length > 0 || !!S.sr;
+  if (typeof SRUI !== 'undefined') SRUI.refresh();
   const locked = entropy(S.data) > 7.9;
   $('#editStatus').innerHTML = locked
     ? `<div class="result bad" style="margin-bottom:14px"><b>🔒 ${esc(S.name)} still looks LOCKED.</b> WBWHO can't read a locked save. Unlock (decrypt) it first, and make sure you picked the <b>unlocked</b> file. Tap ❓ Help to see how.</div>`
