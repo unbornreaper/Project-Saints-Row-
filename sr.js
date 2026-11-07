@@ -54,10 +54,20 @@ const SR_GROUPS = [
   { id: 'music', emoji: '🎵', title: 'Music', sec: 0, tag: '00900101', own: 's0' },
   { id: 'decor', emoji: '🏠', title: 'HQ decorations (test)', sec: 0, tag: '00600101', own: 's0', skipMax: true },
 ];
+// Money and XP keep two numbers: "you have now" (00100008, what the game shows) and "total earned" (00000008).
 const SR_NUMBERS = [
-  { emoji: '💰', title: 'Money', sec: 0, name: 'cash', key: '00000008', max: 99999999, maxBtn: true },
-  { emoji: '⭐', title: 'XP', sec: 0, name: 'xp', key: '00000008', max: 99999999, tip: 'Careful: huge XP can stop the save from loading. Small raises are safest.' },
+  { emoji: '💰', title: 'Money', sec: 0, name: 'cash', key: '00100008', total: '00000008', max: 99999999, maxBtn: true },
+  { emoji: '⭐', title: 'XP', sec: 0, name: 'xp', key: '00100008', total: '00000008', max: 99999999,
+    tip: 'Your level comes from this number. Raise it a little at a time (for example +5,000) and check your level in the game.' },
 ];
+// Writes "you have now" and makes sure "total earned" is never smaller.
+function srSetNumber(n, x, quiet) {
+  const ob = SR.find(S.sr, n.sec, n.name), f = SR.field(ob, n.key), t = n.total && SR.field(ob, n.total);
+  if (!writeVal(f.off, 'u32', x, true)) return false;
+  if (t && readVal(S.data, t.off, 'u32') < x) writeVal(t.off, 'u32', x, true);
+  if (!quiet) afterChange();
+  return true;
+}
 
 const SRUI = {
   open: new Set(), filter: {},
@@ -164,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (b.id === 'srMaxAll') {
       if (!confirm('MAX EVERYTHING?\n\n• Money → ' + fmt(SR_NUMBERS[0].max) + '\n• Unlock all guns, cars, clothes, emotes & music\n\nYou can undo this.')) return;
       const n0 = SR_NUMBERS[0], f = SR.field(SR.find(S.sr, n0.sec, n0.name), n0.key);
-      if (f && readVal(S.data, f.off, 'u32') < n0.max) writeVal(f.off, 'u32', n0.max, true);
+      if (f && readVal(S.data, f.off, 'u32') < n0.max) srSetNumber(n0, n0.max, true);
       let n = 0;
       S.srGroups.filter(g => !g.skipMax).forEach(g => SRUI.items(g).forEach(x => { if (!SRUI.owned(g, x)) { SRUI.setOwned(g, x, true); n++; } }));
       afterChange();
@@ -173,10 +183,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (b.dataset.srset !== undefined || b.dataset.srmax !== undefined) {
       const i = +(b.dataset.srset ?? b.dataset.srmax), n = SR_NUMBERS[i];
-      const f = SR.field(SR.find(S.sr, n.sec, n.name), n.key);
       const x = b.dataset.srmax !== undefined ? n.max : parseNum($('#srin' + i).value);
       if (!Number.isFinite(x) || x < 0 || x > n.max) return toast(`⚠️ Type a number from 0 to ${fmt(n.max)}.`);
-      if (writeVal(f.off, 'u32', x)) toast(`${n.emoji} ${n.title} is now <b>${fmt(Math.round(x))}</b>! Tap 💾 Save when done.`);
+      if (srSetNumber(n, Math.round(x))) toast(`${n.emoji} ${n.title} is now <b>${fmt(Math.round(x))}</b>! Tap 💾 Save when done.`);
     } else if (b.dataset.srall) {
       const g = grp(b.dataset.srall);
       if (!confirm(`Unlock ALL ${g.title}? (You can undo this.)`)) return;
