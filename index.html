@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#7b2ff7">
+<meta name="theme-color" content="#0d0b14">
 <title>WBWHO Save Editor</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 
 <header class="top">
-  <div class="brand">⭐ WBWHO <span class="tiny">v4</span></div>
+  <div class="brand"><img src="icon.svg" alt="">WBWHO <span class="ver">v5</span></div>
   <div class="fileinfo" id="fileinfo">No save open</div>
   <div class="topbtns">
     <button id="btnUndo" class="small" disabled title="Undo">↩️ Undo</button>
@@ -25,38 +25,42 @@
 
 <!-- ================= START ================= -->
 <section id="tab-start" class="tab">
-  <h1>Hi! 👋 Let's edit your save.</h1>
-
-  <div class="card">
-    <h2>1️⃣ Open your save</h2>
-    <p>Pick your <b>unlocked</b> save file. (Not sure how to unlock it? Tap <b>❓ Help</b> at the bottom.)</p>
-    <label class="bigbtn">📂 Open my save file
-      <input type="file" id="pickMain" hidden>
-    </label>
-    <p class="tiny">Your file never leaves your device. WBWHO works on your computer or phone, even with no internet.</p>
+  <div class="hero">
+    <h1>Edit your Saints Row save</h1>
+    <p>Max your money, unlock every gun, car and outfit, and more. Made simple, so anyone can do it.</p>
+    <div class="badges"><span class="badge">🔒 Your file stays on your device</span><span class="badge">🏆 Trophies stay safe</span><span class="badge">↩️ Undo anything</span></div>
   </div>
 
-  <div class="card">
-    <h2>🧪 Just testing?</h2>
-    <p>Make a <b>fake save</b> to practice with. It works like the real thing.</p>
-    <button class="bigbtn alt" id="btnDemo1">🧪 Make a fake save</button>
-    <button class="bigbtn alt2" id="btnDemo2">🧪 Make fake save #2 <span class="tiny">(you "spent money")</span></button>
-    <p class="tiny">Fake save #2 helps you practice the <b>🔎 Find</b> page.</p>
+  <div class="grid2">
+    <div class="card">
+      <h2>📂 Open your save</h2>
+      <p>Pick your <b>unlocked</b> save file (usually called <b>SAVEDATA0.DAT</b>).</p>
+      <label class="bigbtn">📂 Open my save file
+        <input type="file" id="pickMain" hidden>
+      </label>
+      <p class="tiny">Don't have it yet? The <b>📘 Guide</b> tab shows you how to get it with Save Wizard, step by step.</p>
+    </div>
+
+    <div class="card">
+      <h2>🧪 Just practicing?</h2>
+      <p>Make a <b>fake save</b> to try everything out first.</p>
+      <button class="bigbtn alt" id="btnDemo1">🧪 Make a fake save</button>
+      <button class="bigbtn alt2" id="btnDemo2">🧪 Make fake save #2 <span class="tiny">(you "spent money")</span></button>
+    </div>
   </div>
 
-  <div class="card" id="loadedBox" hidden>
-    <h2>2️⃣ What's in your save</h2>
+  <div class="card" id="loadedBox" hidden style="margin-top:14px">
+    <h2>✅ Your save</h2>
     <div id="fileReport"></div>
     <button class="bigbtn alt" id="btnBackup">🛟 Download a backup copy first</button>
-    <p class="tiny">A backup is a safe copy. If anything goes wrong, you put the backup back and it's like nothing happened.</p>
-    <h2>3️⃣ Then…</h2>
-    <p>Go to <b>🎮 Edit</b> to change stuff, or <b>🔎 Find</b> to find new things to change. When you're done, tap <b>💾 Save</b> at the top.</p>
+    <p class="tiny">A backup is a safe copy. If anything goes wrong, put the backup back and it's like nothing happened.</p>
+    <p><b>Next:</b> go to <b>🎮 Edit</b> to change stuff. When you're done, click <b>💾 Save</b> at the top.</p>
   </div>
 </section>
 
 <!-- ================= EDIT ================= -->
 <section id="tab-edit" class="tab" hidden>
-  <h1>🎮 Edit stuff</h1>
+  <h1>🎮 Edit</h1>
   <div id="editEmpty" class="card">
     <p>Open a save first (on the <b>🏠 Start</b> page).</p>
   </div>
@@ -151,96 +155,129 @@
 
 <!-- ================= HELP ================= -->
 <section id="tab-help" class="tab" hidden>
-  <h1>❓ Help</h1>
+  <h1>📘 Guide</h1>
+  <p class="sub">How to get your save off the PlayStation, edit it, and put it back with <b>Save Wizard for PS4 MAX</b>.</p>
 
-  <details class="card" open>
-    <summary><b>🏆 Will this mess up my trophies?</b></summary>
-    <p><b>No.</b> Your trophies are kept on your <b>PlayStation account</b>, not in the save file. WBWHO only changes the save file, so it can't delete or change trophies you already have.</p>
-    <p>Two things to know:</p>
+  <div class="callout blue"><b>Before you start, you need:</b>
     <ul>
-      <li>If you give yourself loads of money or unlock everything, the game <b>might hand you a trophy</b> for it later. If you only want trophies you earned yourself, don't max out things that have trophies.</li>
-      <li>When you put the save back on your PlayStation, <b>sign it to your own account</b> (Save Wizard calls this "Re-sign"). That keeps everything tied to you.</li>
+      <li>A <b>Save Wizard for PS4 MAX</b> license and the app on your computer (Windows or Mac). Get it from the official Save Wizard website.</li>
+      <li>A <b>USB stick</b> formatted as <b>exFAT</b> or <b>FAT32</b>.</li>
+      <li>The <b>PS4 version</b> of Saints Row. It still works if you play it on a PS5. Saves from the <b>PS5 version</b> of the game <b>can't</b> be edited.</li>
     </ul>
-  </details>
+  </div>
 
-  <details class="card">
-    <summary><b>🔒 My save is "locked". What do I do?</b></summary>
-    <p>PlayStation locks (encrypts) every save so you can't open it on a computer. You need a tool to <b>unlock it first</b>. WBWHO can't do that part.</p>
-    <ul>
-      <li><b>Save Wizard for PS4 MAX</b> (costs money, works on any PS4 or PS5): use <b>Advanced Mode</b> to <b>Decrypt</b> (get the file out), then <b>Replace</b> (put your edited file back).</li>
-      <li><b>Apollo Save Tool</b> (free, only on a jailbroken PS4): use "Decrypt save files", then "Import decrypted file".</li>
-    </ul>
-    <p>⚠️ <b>PS5 note:</b> Saves from the <b>PS5 version</b> of a game are much harder to get off the console and usually can't be unlocked right now. The <b>PS4 version</b> of the game (which also plays on PS5) is the one that works.</p>
-  </details>
+  <div class="sectiontitle">Part 1: Get your save out</div>
+  <div class="stepper">
+    <div class="step"><h3>Save the game and close it</h3>
+      <p>Play Saints Row, <b>save</b>, then <b>close the game completely</b> (press the PS button and choose Close Game).</p></div>
 
-  <details class="card">
-    <summary><b>🪜 The whole thing, step by step</b></summary>
+    <div class="step"><h3>Copy the save to your USB stick</h3>
+      <p>Plug the USB stick into your PlayStation, then:</p>
+      <p><b>PS4:</b> <span class="path">Settings → Application Saved Data Management → Saved Data in System Storage → Copy to USB Storage Device</span> → <b>Saints Row</b> → tick your save → <b>Copy</b>.</p>
+      <p><b>PS5:</b> <span class="path">Settings → Saved Data and Game/App Settings → Saved Data (PS4) → Console Storage → Copy to USB Drive</span> → <b>Saints Row</b> → tick your save → <b>Copy</b>.</p></div>
+
+    <div class="step"><h3>Open Save Wizard on your computer</h3>
+      <p>Plug the USB stick into your computer and open <b>Save Wizard for PS4 MAX</b>. Log in if it asks. After a moment it shows the games it found on the USB stick.</p>
+      <div class="callout"><b>First time only: add your profile.</b> Save Wizard needs to know your PlayStation account so it can sign saves for you. Find the <b>Profiles</b> option in Save Wizard (in settings) and register your profile using a save from <b>your own</b> account on the USB stick. Give it your name.</div></div>
+
+    <div class="step"><h3>Get the unlocked file out</h3>
+      <ol>
+        <li>Click <b>Saints Row</b>, then click your save.</li>
+        <li>Click <b>Advanced Mode</b>.</li>
+        <li>Choose the file <b>SAVEDATA0.DAT</b>.</li>
+        <li>Click <b>Decrypt</b> (also called <i>Export</i> or <i>Download</i>) and save it somewhere easy, like your Desktop.</li>
+      </ol>
+      <p class="tiny">Button names can change a little between Save Wizard versions. Look for the one that <i>gets the file out</i>.</p></div>
+  </div>
+
+  <div class="sectiontitle">Part 2: Edit it with WBWHO</div>
+  <div class="stepper">
+    <div class="step"><h3>Open it in WBWHO and make a backup</h3>
+      <p>On the <b>🏠 Start</b> tab, click <b>Open my save file</b> and pick <b>SAVEDATA0.DAT</b>. Then click <b>🛟 Download a backup copy</b> and keep it safe.</p></div>
+    <div class="step"><h3>Change what you want</h3>
+      <p>Go to <b>🎮 Edit</b>. Use <b>⚡ Max Everything</b>, or change things one at a time.</p>
+      <div class="callout"><b>First time? Start small.</b> Change only your <b>money</b>, put it back, and check the game loads. Then come back and do the rest. If something goes wrong, you'll know exactly what caused it.</div></div>
+    <div class="step"><h3>Save it</h3>
+      <p>Click <b>💾 Save</b> at the top. Your browser downloads <b>SAVEDATA0.DAT</b>.</p>
+      <div class="callout red"><b>Keep the name exactly SAVEDATA0.DAT.</b> If your computer renamed it (like <i>SAVEDATA0 (1).DAT</i>), rename it back.</div></div>
+  </div>
+
+  <div class="sectiontitle">Part 3: Put it back</div>
+  <div class="stepper">
+    <div class="step"><h3>Replace the file with Save Wizard</h3>
+      <ol>
+        <li>In Save Wizard, click the <b>same</b> Saints Row save as before.</li>
+        <li>Click <b>Advanced Mode</b> and choose <b>SAVEDATA0.DAT</b>.</li>
+        <li>Click <b>Replace</b> (also called <i>Import</i>) and pick the file WBWHO gave you.</li>
+        <li>If it asks which profile to use, pick <b>your</b> profile. This is called <b>re-signing</b>.</li>
+        <li>Wait until it says it's done. Save Wizard locks the save again and writes it back to the USB stick.</li>
+      </ol>
+      <div class="callout red"><b>Don't copy the file straight onto the USB stick.</b> The PlayStation can't read an unlocked file. It <b>must</b> go back through Save Wizard's <b>Replace</b>.</div></div>
+
+    <div class="step"><h3>Copy it back to your PlayStation</h3>
+      <p>Make sure Saints Row is closed, plug the USB stick into your PlayStation, then:</p>
+      <p><b>PS4:</b> <span class="path">Settings → Application Saved Data Management → Saved Data on USB Storage Device → Copy to System Storage</span> → Saints Row → your save → <b>Copy</b> → <b>Overwrite</b>.</p>
+      <p><b>PS5:</b> <span class="path">Settings → Saved Data and Game/App Settings → Saved Data (PS4) → USB Drive → Copy to Console Storage</span> → Saints Row → your save → <b>Copy</b> → <b>Overwrite</b>.</p></div>
+
+    <div class="step"><h3>Play! 🎉</h3>
+      <p>Start Saints Row and load that save. Your changes should be there.</p>
+      <p class="tiny">Tip: if you use PS Plus cloud saves, the console may offer to download the cloud copy. Say <b>no</b>, or it will replace your edited save.</p></div>
+  </div>
+
+  <div class="sectiontitle">Help! My save won't load</div>
+  <div class="card">
+    <p>Go down this list. Most problems are fixed by one of these:</p>
     <ol>
-      <li>On PlayStation: <b>Settings → Saved Data → Copy to USB</b>.</li>
-      <li>On your computer: <b>unlock</b> the save (see the 🔒 part above).</li>
-      <li>Open the unlocked file in WBWHO.</li>
-      <li>Tap <b>🛟 Download a backup copy</b>. Keep it safe!</li>
-      <li>Change what you want on <b>🎮 Edit</b>, or find new things on <b>🔎 Find</b>.</li>
-      <li>Tap <b>💾 Save</b>. You get a file with the <b>same name</b>. Don't rename it!</li>
-      <li>Use your unlock tool to <b>put it back</b> (Replace / Import) and <b>re-sign</b> it to your account.</li>
-      <li>Copy it back from the USB to your PlayStation, then load the game. 🎉</li>
+      <li><b>Did it go back through Save Wizard's Replace?</b> Copying the .DAT file straight onto the USB stick never works.</li>
+      <li><b>Is the name exactly SAVEDATA0.DAT?</b> No "(1)" or other extra bits.</li>
+      <li><b>Did you replace the same save you took out?</b> Different save slots can't be mixed.</li>
+      <li><b>Did you pick your own profile when re-signing?</b> A save signed to another account won't load.</li>
+      <li><b>Did the cloud overwrite it?</b> Turn off auto-upload/download for Saints Row while testing.</li>
+      <li><b>Too much at once?</b> Put your <b>backup</b> back, then try changing <b>only money</b>. If that works, add more a bit at a time.</li>
+      <li><b>Big numbers:</b> giving yourself huge <b>XP</b> can confuse the game. WBWHO's ⚡ Max Everything button leaves XP alone for that reason.</li>
+    </ol>
+    <p class="tiny">Still stuck? Write down exactly what the PlayStation says (for example "The saved data is corrupted") and which steps you did. It helps a lot to figure out what went wrong.</p>
+  </div>
+
+  <div class="sectiontitle">Good to know</div>
+  <details class="card">
+    <summary>🏆 Will this mess up my trophies?</summary>
+    <p><b>No.</b> Trophies are kept on your <b>PlayStation account</b>, not in the save file, so WBWHO can't remove any you already have.</p>
+    <p>Unlocking everything <b>might</b> make the game give you trophies for collecting stuff. If you only want trophies you earned yourself, don't unlock everything.</p>
+  </details>
+
+  <details class="card">
+    <summary>💰 Find a number by yourself (any game)</summary>
+    <ol>
+      <li>In the game, look at the number (example: money is <b>12500</b>).</li>
+      <li>On <b>🔎 Find</b>, type <b>12500</b> and click <b>Find it!</b></li>
+      <li>One spot found? Click <b>⭐ Make a button</b>. Lots? Change the number in the game, save, and use <b>Load my newer save</b> to narrow it down.</li>
     </ol>
   </details>
 
   <details class="card">
-    <summary><b>💰 How do I find my money (or anything else)?</b></summary>
-    <ol>
-      <li>In the game, look at how much money you have. Example: <b>12500</b>.</li>
-      <li>On <b>🔎 Find</b>, type <b>12500</b> and tap <b>Find it!</b></li>
-      <li>If it finds <b>one</b> spot, that's it! Tap <b>⭐ Make a button</b>.</li>
-      <li>If it finds <b>lots</b> of spots, go back in the game, <b>spend or earn some money</b>, save, unlock that new save, then use <b>"Load my newer save"</b> and type the new number. Do this until only one spot is left.</li>
-    </ol>
-    <p>Try it with the two <b>fake saves</b> first. It's easy once you've done it once!</p>
+    <summary>🆚 Missions and other unlocks</summary>
+    <p>Save before doing something (like a mission), then save after. Put both in <b>🆚 Compare</b> to see exactly what changed, and copy it into any save.</p>
   </details>
 
   <details class="card">
-    <summary><b>🚗🔫👕 Cars, guns, outfits & missions</b></summary>
-    <p>These are usually stored as <b>on/off switches</b>, not numbers. The easiest way to find them:</p>
-    <ol>
-      <li>Save the game (this is <b>BEFORE</b>).</li>
-      <li>Unlock <b>one</b> thing: buy a gun, finish a mission, get an outfit.</li>
-      <li>Save again (this is <b>AFTER</b>).</li>
-      <li>Put both saves in <b>🆚 Compare</b>. It shows what changed. Make a button from it, or copy the change into your save.</li>
-    </ol>
-    <p>You can also search for a name with <b>🔤 Find a word</b>, then look at the boxes next to it.</p>
-  </details>
-
-  <details class="card">
-    <summary><b>📖 Word list (what do these mean?)</b></summary>
+    <summary>📖 Word list</summary>
     <ul>
-      <li><b>Save file</b>: the file where the game keeps your progress.</li>
-      <li><b>Locked / encrypted</b>: scrambled so only the PlayStation can read it.</li>
-      <li><b>Unlocked / decrypted</b>: unscrambled, so WBWHO can read it.</li>
-      <li><b>Re-sign</b>: stamping the save with your account so your PlayStation accepts it.</li>
-      <li><b>Backup</b>: a safe copy of your save, just in case.</li>
-      <li><b>Spot #</b>: where something is inside the file, like a page number in a book.</li>
-      <li><b>Cheat list</b>: all your WBWHO buttons saved in one small file.</li>
-      <li><b>Check code</b>: a number the game uses to tell if a save was changed. WBWHO fixes it for you when it can.</li>
+      <li><b>Save file:</b> where the game keeps your progress.</li>
+      <li><b>Locked / encrypted:</b> scrambled so only the PlayStation can read it.</li>
+      <li><b>Unlocked / decrypted:</b> unscrambled, so WBWHO can read it.</li>
+      <li><b>Re-sign:</b> stamping the save with your account so your PlayStation accepts it.</li>
+      <li><b>Backup:</b> a safe copy of your save, just in case.</li>
+      <li><b>Spot #:</b> where something is inside the file, like a page number in a book.</li>
     </ul>
   </details>
 
   <details class="card">
-    <summary><b>🛟 Safety tips</b></summary>
+    <summary>📱 Put WBWHO on your home screen like an app</summary>
     <ul>
-      <li><b>Always</b> keep a backup.</li>
-      <li>Change a few things, test in the game, then change more. It makes problems easy to find.</li>
-      <li>Don't make numbers crazy big. Big but normal (like 999,999,999 money) is safest.</li>
-      <li>Play modded saves on your own, not online with other people.</li>
-      <li>If the game says the save is broken, put your backup back. No harm done.</li>
-    </ul>
-  </details>
-
-  <details class="card">
-    <summary><b>📱 Put WBWHO on your home screen like an app</b></summary>
-    <ul>
-      <li><b>iPhone:</b> open WBWHO in Safari → Share button → <b>Add to Home Screen</b>.</li>
-      <li><b>Android:</b> open in Chrome → ⋮ menu → <b>Install app</b>.</li>
-      <li><b>Computer:</b> open in Chrome or Edge → click the install icon in the address bar.</li>
+      <li><b>iPhone:</b> Safari → Share button → <b>Add to Home Screen</b>.</li>
+      <li><b>Android:</b> Chrome → ⋮ menu → <b>Install app</b>.</li>
+      <li><b>Computer:</b> Chrome or Edge → click the install icon in the address bar.</li>
     </ul>
   </details>
 </section>
@@ -253,13 +290,13 @@
   <button data-tab="find">🔎<span>Find</span></button>
   <button data-tab="compare">🆚<span>Compare</span></button>
   <button data-tab="hex">🧾<span>Inside</span></button>
-  <button data-tab="help">❓<span>Help</span></button>
+  <button data-tab="help">📘<span>Guide</span></button>
 </nav>
 
 <div id="toast" class="toast" hidden></div>
 <input type="file" id="pickNewer" hidden>
 
-<script src="sr.js?v=4"></script>
-<script src="app.js?v=4"></script>
+<script src="sr.js?v=5"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>

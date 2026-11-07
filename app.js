@@ -235,7 +235,7 @@ function report() {
   if (S.isDemo) lines.push('<p>🧪 This is a <b>fake save</b> made by WBWHO. Buttons are already made for you on 🎮 Edit!</p>');
   lines.push(`<p>Scrambled-ness:</p><div class="bar"><div style="width:${Math.min(100, e / 8 * 100)}%"></div></div>`);
   if (locked) {
-    lines.push(`<div class="result bad"><b>🔒 This save looks LOCKED.</b><br>It's still scrambled by the PlayStation, so WBWHO can't read it yet. You need to unlock (decrypt) it first with Save Wizard or Apollo. Tap <b>❓ Help</b> to see how.</div>`);
+    lines.push(`<div class="result bad"><b>🔒 This save looks LOCKED.</b><br>It's still scrambled by the PlayStation, so WBWHO can't read it yet. You need to unlock (decrypt) it first with Save Wizard or Apollo. Open the <b>📘 Guide</b> tab to see how.</div>`);
   } else {
     lines.push('<div class="result good"><b>✅ Looks unlocked.</b> WBWHO can read it!</div>');
   }
@@ -295,7 +295,7 @@ function renderCards() {
   if (typeof SRUI !== 'undefined') SRUI.refresh();
   const locked = entropy(S.data) > 7.9;
   $('#editStatus').innerHTML = locked
-    ? `<div class="result bad" style="margin-bottom:14px"><b>🔒 ${esc(S.name)} still looks LOCKED.</b> WBWHO can't read a locked save. Unlock (decrypt) it first, and make sure you picked the <b>unlocked</b> file. Tap ❓ Help to see how.</div>`
+    ? `<div class="result bad" style="margin-bottom:14px"><b>🔒 ${esc(S.name)} still looks LOCKED.</b> WBWHO can't read a locked save. Unlock (decrypt) it first, and make sure you picked the <b>unlocked</b> file. Open the 📘 Guide tab to see how.</div>`
     : `<div class="result good" style="margin-bottom:14px">✅ <b>${esc(S.name)}</b> is open (${fmt(S.data.length)} bytes).</div>`;
   const groups = {};
   list.forEach(r => (groups[r.group || 'My buttons'] ||= []).push(r));
