@@ -52,11 +52,11 @@ const SR_GROUPS = [
   { id: 'rewards', emoji: '🎁', title: 'Reward clothes', sec: 0, tag: '00400101', own: 's0' },
   { id: 'emotes', emoji: '💃', title: 'Emotes (dances & moves)', sec: 0, tag: '00d00101', own: 's0' },
   { id: 'music', emoji: '🎵', title: 'Music', sec: 0, tag: '00900101', own: 's0' },
-  { id: 'decor', emoji: '🏠', title: 'HQ decorations', sec: 0, tag: '00600101', own: 's0' },
+  { id: 'decor', emoji: '🏠', title: 'HQ decorations (test)', sec: 0, tag: '00600101', own: 's0', skipMax: true },
 ];
 const SR_NUMBERS = [
-  { emoji: '💰', title: 'Money', sec: 0, name: 'cash', key: '00000008', max: 999999999 },
-  { emoji: '⭐', title: 'XP', sec: 0, name: 'xp', key: '00000008', max: 999999999 },
+  { emoji: '💰', title: 'Money', sec: 0, name: 'cash', key: '00000008', max: 99999999, maxBtn: true },
+  { emoji: '⭐', title: 'XP', sec: 0, name: 'xp', key: '00000008', max: 99999999, tip: 'Careful: huge XP can stop the save from loading. Small raises are safest.' },
 ];
 
 const SRUI = {
@@ -86,25 +86,30 @@ const SRUI = {
     const box = $('#srPanel');
     S.srGroups = SR_GROUPS.map(g => ({ ...g }));
     if (!S.sr) { box.hidden = true; box.innerHTML = ''; return; }
-    let h = `<div class="result good" style="margin-bottom:14px">🎮 <b>Saints Row save found!</b> WBWHO read <b>${fmt(S.sr.objs.length)}</b> things in it. Change them below.</div>`;
-    h += '<div class="group"><div class="grouphead"><h2>Main stuff</h2></div>';
+    let h = `<div class="result good" style="margin-bottom:14px">🎮 <b>Saints Row save found!</b> WBWHO read <b>${fmt(S.sr.objs.length)}</b> things in it.</div>`;
+    h += `<div class="card"><h2>⚡ One button does it all</h2>
+      <p>Gives you <b>${fmt(SR_NUMBERS[0].max)}</b> money and unlocks every gun, car, outfit, emote and song.</p>
+      <button class="bigbtn maxbtn" id="srMaxAll">⚡ MAX EVERYTHING</button>
+      <p class="tiny">XP and HQ decorations are left alone to keep your save loading safely. You can still change them below. Click ↩️ Undo if you change your mind.</p></div>`;
+    h += '<div class="group"><div class="grouphead"><h2>Main stuff</h2></div><div class="cardgrid">';
     SR_NUMBERS.forEach((n, i) => {
       const ob = SR.find(S.sr, n.sec, n.name), f = ob && SR.field(ob, n.key);
       if (!f) return;
       h += `<div class="ecard"><div class="head"><span class="emo">${n.emoji}</span><span class="name">${n.title}</span></div>
         <div class="now" id="srnum${i}"></div>
         <div class="ctrl"><input type="text" inputmode="numeric" id="srin${i}" placeholder="New number">
-        <button class="go" data-srset="${i}">Set</button><button data-srmax="${i}">🚀 Max</button></div></div>`;
+        <button class="go" data-srset="${i}">Set</button>${n.maxBtn ? `<button data-srmax="${i}">🚀 Max</button>` : ''}</div>
+        ${n.tip ? `<p class="tiny" style="margin-top:8px">${n.tip}</p>` : ''}</div>`;
     });
-    h += '</div><div class="group"><div class="grouphead"><h2>Unlock stuff</h2></div>';
-    h += '<p class="tiny">Tip: unlock one group, test it in the game, then do more. Your backup can undo anything.</p>';
+    h += '</div></div><div class="group"><div class="grouphead"><h2>Unlock stuff</h2></div><div class="cardgrid">';
     S.srGroups.forEach(g => {
       if (!this.items(g).length) return;
       h += `<div class="ecard"><div class="head"><span class="emo">${g.emoji}</span><span class="name">${g.title}<br><span class="tiny" id="srcount_${g.id}"></span></span></div>
+        <div class="progress"><div id="srbar_${g.id}" style="width:0"></div></div>
         <div class="ctrl" style="margin-top:8px"><button class="go" data-srall="${g.id}">🔓 Unlock all</button><button data-srlist="${g.id}">📋 Pick one by one</button></div>
         <div id="srlist_${g.id}" hidden><input type="text" placeholder="Search…" data-srfilter="${g.id}" style="margin-top:10px"><div class="hitlist" id="sritems_${g.id}"></div></div></div>`;
     });
-    h += `</div><div class="group"><div class="grouphead"><h2>🧰 Everything else</h2></div>
+    h += `</div></div><div class="group"><div class="grouphead"><h2>Everything else</h2></div>
       <div class="ecard"><p>Search <b>any</b> setting in your save by its name, like <i>stat_</i>, <i>notoriety</i>, or <i>wingsuit</i>, and change its numbers directly.</p>
       <p class="tiny">This is for experts. If you're not sure what a number does, leave it alone.</p>
       <input type="text" id="srAny" placeholder="Search every setting…"><div class="hitlist" id="srAnyList"></div></div>
@@ -123,6 +128,7 @@ const SRUI = {
       const el = $('#srcount_' + g.id); if (!el) return;
       const it = this.items(g), own = it.filter(x => this.owned(g, x)).length;
       el.textContent = `${fmt(own)} of ${fmt(it.length)} unlocked`;
+      const bar = $('#srbar_' + g.id); if (bar) bar.style.width = (it.length ? own / it.length * 100 : 0) + '%';
       if (this.open.has(g.id)) this.renderList(g);
     });
     if ($('#srAny') && $('#srAny').value.trim()) this.renderAny();
@@ -155,6 +161,16 @@ document.addEventListener('DOMContentLoaded', () => {
   panel.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
     const grp = id => S.srGroups.find(g => g.id === id);
+    if (b.id === 'srMaxAll') {
+      if (!confirm('MAX EVERYTHING?\n\n• Money → ' + fmt(SR_NUMBERS[0].max) + '\n• Unlock all guns, cars, clothes, emotes & music\n\nYou can undo this.')) return;
+      const n0 = SR_NUMBERS[0], f = SR.field(SR.find(S.sr, n0.sec, n0.name), n0.key);
+      if (f && readVal(S.data, f.off, 'u32') < n0.max) writeVal(f.off, 'u32', n0.max, true);
+      let n = 0;
+      S.srGroups.filter(g => !g.skipMax).forEach(g => SRUI.items(g).forEach(x => { if (!SRUI.owned(g, x)) { SRUI.setOwned(g, x, true); n++; } }));
+      afterChange();
+      toast(`⚡ Maxed! Money set and ${fmt(n)} things unlocked. Click 💾 Save when ready.`, 4500);
+      return;
+    }
     if (b.dataset.srset !== undefined || b.dataset.srmax !== undefined) {
       const i = +(b.dataset.srset ?? b.dataset.srmax), n = SR_NUMBERS[i];
       const f = SR.field(SR.find(S.sr, n.sec, n.name), n.key);

@@ -1,11 +1,15 @@
-// Lets WBWHO work offline after the first visit.
-const CACHE = 'wbwho-v3';
-const FILES = ['./', './index.html', './style.css', './app.js', './sr.js', './icon.svg', './manifest.webmanifest'];
-self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))));
+// Lets WBWHO work offline. Always tries the internet first so you get the newest version.
+const CACHE = 'wbwho-v5';
+self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(
   caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+    .then(() => self.clients.claim())
 ));
-self.addEventListener('fetch', e => e.respondWith(
-  fetch(e.request).then(r => { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); return r; })
-    .catch(() => caches.match(e.request))
-));
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    fetch(e.request, { cache: 'no-store' })
+      .then(r => { const copy = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); return r; })
+      .catch(() => caches.match(e.request))
+  );
+});
